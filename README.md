@@ -4,7 +4,7 @@ Creates a rump dump of a mysql database (only some tables) and anonymizes it usi
 ## Installation
 
 1. Clone repo
-2. Install myanon: [myanon](https://github.com/ppomes/myanon)
+2. Install myanon: [https://github.com/ppomes/myanon](https://github.com/ppomes/myanon)
 3. Copy the example config: `cp myanon-top-example.cfg myanon-top.cfg`
 4. Edit `myanon-top.cfg` as needed
 5. Copy the example config: `cp rumpanondb-config-example.php rumpanondb-config.php`
