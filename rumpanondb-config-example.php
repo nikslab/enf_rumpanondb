@@ -27,3 +27,11 @@ $myanon_top = "myanon-top.cfg";
 # myanon tables cfg
 $myanon_cfg = "myanon.cfg";
 
+# Rump and anonymized .sql file
+$output_file = "rumpanondb.sql";
+
+# Logging
+$LOG_FILE  = "rumpanondb.log";
+$LOG_LEVEL = 5; // 0=log nothing; 5=log a lot
+$LOG_PRINT = true;
+
