@@ -20,5 +20,8 @@ Note that if database is successfully anonymized the script will return 1. If so
 
 On my computer the script takes about 10 seconds to run.
 
+## Test
+Run it on your own laptop, then import into a database on your laptop say into a database `rumpanon` with something like `mysql -u user -ppass rumpanon < rumpanondb.sql` and check that everything is anonymized properly and only some tables as in the database, as per config.
+
 ## Logging
 There is a log in `rumpanondb.log`
