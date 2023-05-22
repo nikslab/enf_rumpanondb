@@ -20,7 +20,7 @@ $combined_contents = $file1_contents . $file2_contents;
 file_put_contents("$directory/myanon.cfg", $combined_contents);
 
 // Construct the mysqldump command with a pipe to myanon
-$command = "mysqldump -u $db_user -p$db_pass $db_name " . implode(' ', $tables);
+$command = "mysqldump -h $db_server -P $db_port -u $db_user -p$db_pass $db_name " . implode(' ', $tables);
 $pipe = " 2> /dev/null | $myanon_cmd -f $directory/myanon.cfg > $directory/$output_file 2> /dev/null";
 logThis(4, "$command");
 logThis(4, "$pipe");
@@ -75,11 +75,14 @@ function checkAnonymization($filename) {
         // Check if the number is greater than 0
         if ($number > 0) {
             logThis(1, "$number anonymizations done");
+            print "1\n";
         } else {
             logThis(1, "Dump not anonymized! Could be a problem with the myanon config file!");
+            print "0\n";
         }
     } else {
         logThis(1, "Dump not anonymized! Could be a problem with the myanon config file!");
+        print "0\n";
     }
 }
 
