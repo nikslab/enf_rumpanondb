@@ -33,5 +33,5 @@ $output_file = "rumpanondb.sql";
 # Logging
 $LOG_FILE  = "rumpanondb.log";
 $LOG_LEVEL = 5; // 0=log nothing; 5=log a lot
-$LOG_PRINT = true;
+$LOG_PRINT = false;
 
