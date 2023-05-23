@@ -59,7 +59,7 @@ foreach ($tables as $table) {
 if ($total_anonymizations > 1000000) {
     logThis(1, "$total_anonymizations total anonymizations, this assumes anonymizations worked, proceeding with import");
     logThis(1, "Importing $directory/$output_file to $db_user@$db_server:$db_port $db_name, this may take a while");
-    $command = "$mysql_cmd -h $db_server -P $db_port -u $db_user -p$db_pass $db_name < $directory/$output_file";
+    $command = "$mysql_cmd -h $db_server -P $db_port -u $db_user -p$db_pass $db_name < $directory/$output_file 2> /dev/null";
     logThis(4, "Executing: $command");
     shell_exec($command);
     logThis(1, "Finished importing $directory/$output_file");
