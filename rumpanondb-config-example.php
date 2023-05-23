@@ -12,6 +12,9 @@ $directory = "/home/enf/enf_rumpanondb";
 $backup_directory = "/home/enf/database";
 
 # Path to myanon
+$gunzip = '/usr/bin/gunzip';
+
+# Path to myanon
 $myanon_cmd = '/usr/local/bin/myanon';
 
 # Database info
