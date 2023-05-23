@@ -17,12 +17,12 @@ $gunzip = '/usr/bin/gunzip';
 # Path to myanon
 $myanon_cmd = '/usr/local/bin/myanon';
 
-# Database info
-$db_server = "127.0.0.1";
+# Database info for the query database that gets the imports
+$db_server = "localhost";
 $db_port = '3306';
-$db_name = 'apollo';
-$db_user = 'homestead';
-$db_pass = 'secret';
+$db_name = 'apolloQ';
+$db_user = 'username';
+$db_pass = 'password';
 
 # List of tables to be dumped
 $tables_file = 'apollo-tables.config'; 
@@ -39,5 +39,5 @@ $output_file = "rumpanondb.sql";
 # Logging
 $LOG_FILE  = "rumpanondb.log";
 $LOG_LEVEL = 5; // 0=log nothing; 5=log a lot
-$LOG_PRINT = false;
+$LOG_PRINT = true;
 

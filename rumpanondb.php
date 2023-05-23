@@ -37,7 +37,7 @@ logThis(4, "$pipe");
 // Construct the gunzip with a pipe to myanon
 $backup_file = getNewestFile($backup_directory);
 logThis(3, "Backup file is $backup_file");
-$command = "$gunzip $backup_file";
+$command = "$gunzip $backup_file 2> /dev/null";
 logThis(3, "Executing: $command");
 shell_exec($command);
 
@@ -56,6 +56,11 @@ foreach ($tables as $table) {
     $total_anonymizations += $anonymizations;
 }
 
+if ($total_anonymizations > 1000000) {
+    logThis(1, "$total_anonymizations total anonymizations, this assumes anonymizations worked, proceeding with import");
+} else {
+    logThis(1, "$total_anonymizations total anonymizations, this assumes anonymizations FAILED, no import will hapen");
+}
 $end_time = microtime(true);
 $execution_time = round($end_time - $start_time, 2);
 logThis(1, "Execution time: $execution_time seconds");
