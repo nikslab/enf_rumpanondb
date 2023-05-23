@@ -14,6 +14,12 @@ $backup_directory = "/home/enf/database";
 # Path to myanon
 $gunzip = '/usr/bin/gunzip';
 
+# Path to mysqldump
+$mysqldump_cmd = '/usr/bin/mysqldump';
+
+# Path to mysql
+$mysql_cmd = '/usr/bin/mysql';
+
 # Path to myanon
 $myanon_cmd = '/usr/local/bin/myanon';
 
