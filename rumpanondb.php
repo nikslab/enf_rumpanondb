@@ -60,9 +60,11 @@ if ($total_anonymizations > 1000000) {
     logThis(1, "$total_anonymizations total anonymizations, this assumes anonymizations worked, proceeding with import");
     logThis(1, "Importing $directory/$output_file to $db_user@$dbserver:$db_port $db_name, this may take a while");
     $command = "$mysql -h $db_server -P $db_port -u $db_user -p$db_pass $db_name < $directory/$output_file";
+    logThis(1, "Finished importing $directory/$output_file");
 } else {
     logThis(1, "$total_anonymizations total anonymizations, this assumes anonymizations FAILED, no import will hapen");
 }
+
 $end_time = microtime(true);
 $execution_time = round($end_time - $start_time, 2);
 logThis(1, "Execution time: $execution_time seconds");
