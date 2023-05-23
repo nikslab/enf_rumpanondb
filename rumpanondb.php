@@ -45,15 +45,16 @@ $database_dump = getNewestFile($backup_directory);
 
 // Extract individual tables, anonymize them, and append them to result sql
 unlink($output_file); // start with fresh output file
+$total_anonymizations = 0;
 foreach ($tables as $table) {
     logThis(2, "Extracting and anonymizing table $table");
     $command = "$directory/extract_table.sh $database_dump $table | $myanon_cmd -f $directory/myanon.cfg >> $directory/$output_file 2> /dev/null";    
     logThis(4, "Executing: $command");
     shell_exec($command);
+    $anonymizations = checkAnonymization("$directory/$output_file");
+    logThis(3, "$anonymizations anonymizations on table $table");
+    $total_anonymizations += $anonymizations;
 }
-
-// Check if anonymization is complete
-checkAnonymization("$directory/$output_file");
 
 $end_time = microtime(true);
 $execution_time = round($end_time - $start_time, 2);
@@ -85,20 +86,10 @@ function getNewestFile($directory) {
     return null; // Return null if no files found
 }
 
-// Usage example:
-$directory = '/path/to/directory'; // Replace with the actual directory path
-$newestFile = getNewestFile($directory);
-if ($newestFile !== null) {
-    echo 'Newest file: ' . $newestFile;
-} else {
-    echo 'No files found in the directory.';
-}
-
-
 function checkAnonymization($filename) {
     $f = fopen($filename, 'r');
     if ($f === false) {
-        logThis(-1, "Could not open rump dump file $filename\n");
+        logThis(-1, "Could not open $filename\n");
     }
 
     $cursor = -1;
@@ -124,21 +115,11 @@ function checkAnonymization($filename) {
     fclose($f);
 
     // Extract the number from the last line using a regex
+    $number = 0;
     if (preg_match('/(\d+)/', $lastLine, $matches)) {
         $number = intval($matches[1]);
-
-        // Check if the number is greater than 100,000
-        if ($number > 100000) {
-            logThis(1, "$number anonymizations done");
-            print "1\n";
-        } else {
-            logThis(1, "Dump not anonymized! Could be a problem with the myanon config file!");
-            print "0\n";
-        }
-    } else {
-        logThis(1, "Dump not anonymized! Could be a problem with the myanon config file!");
-        print "0\n";
     }
+    return $number;
 }
 
 function logThis($level, $msg) {
