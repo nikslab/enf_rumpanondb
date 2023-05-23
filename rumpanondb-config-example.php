@@ -6,7 +6,10 @@
 */
 
 # Working directory needed for cron
-$directory = "/home/niks/Desktop/git/enf_rumpanondb";
+$directory = "/home/enf/enf_rumpanondb";
+
+# Directory where database backup is stored in XXX.sql.gz format
+$backup_directory = "/home/enf/database";
 
 # Path to myanon
 $myanon_cmd = '/usr/local/bin/myanon';
