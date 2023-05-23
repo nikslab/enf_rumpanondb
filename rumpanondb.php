@@ -42,12 +42,15 @@ logThis(3, "Executing: $command");
 shell_exec($command);
 
 $database_dump = getNewestFile($backup_directory);
-$command = "/usr/bin/cat $database_dump";
-$pipe = "| $myanon_cmd -f $directory/myanon.cfg > $directory/$output_file 2> /dev/null";
-logThis(4, "Executing: $command.$pipe");
 
-// Execute the command and display the output
-shell_exec($command.$pipe);
+// Extract individual tables, anonymize them, and append them to result sql
+unlink($output_file); // start with fresh output file
+foreach ($tables as $table) {
+    logThis(4, "Extracting and anonymizing table $table");
+    $command = "$directory/extract_table.sh $database_dump $table | $myanon_cmd -f $directory/myanon.cfg >> $directory/$output_file 2> /dev/null";    
+    logThis(4, "Executing: $command");
+    shell_exec($command);
+}
 
 // Check if anonymization is complete
 checkAnonymization("$directory/$output_file");
