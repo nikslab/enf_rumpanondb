@@ -13,5 +13,4 @@ dump_file=$1
 table_name=$2
 
 # Extract table structure and data to standard output
-sed -n "/-- Table structure for table \`$table_name\`/,/^-- Table structure for table/p" "$dump_file" | grep -v 
-'^--' | grep -v '^$'
+sed -n "/-- Table structure for table \`$table_name\`/,/^-- Table structure for table/p" "$dump_file" | grep -v '^--' | grep -v '^$'
