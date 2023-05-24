@@ -43,9 +43,16 @@ shell_exec($command);
 
 $database_dump = getNewestFile($backup_directory);
 
-// Extract individual tables, anonymize them, and append them to result sql
-unlink($output_file); // start with fresh output file
+// Start with fresh output file
+unlink($directory/$output_file); 
+$data = "SET sql_mode = '';\n"; // disable strict mode
+$handle = fopen($directory/$output_file, 'a');
+fwrite($handle, $data);
+fclose($handle);
+
 $total_anonymizations = 0;
+
+// Extract individual tables, anonymize them, and append them to result sql
 foreach ($tables as $table) {
     logThis(2, "Extracting and anonymizing table $table");
     $command = "$directory/extract_table.sh $database_dump $table | $myanon_cmd -f $directory/myanon.cfg >> $directory/$output_file 2> /dev/null";    
