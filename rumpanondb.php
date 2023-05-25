@@ -46,7 +46,10 @@ $database_dump = getNewestFile($backup_directory);
 
 // Start with fresh output file
 unlink("$directory/$output_file"); 
-$data = "SET sql_mode = '';\n"; // disable strict mode
+$data = "
+    SET sql_mode = '';              -- disable strict mode
+    SET FOREIGN_KEY_CHECKS = 0;     -- disable checking of foreign key checks during import
+"; 
 $handle = fopen("$directory/$output_file", 'a');
 fwrite($handle, $data);
 fclose($handle);
@@ -65,7 +68,16 @@ foreach ($tables as $table) {
     $total_anonymizations += $anonymizations;
 }
 
-if ($total_anonymizations > 1000000) {
+// Add a line to reenable foreign key checks
+$data = "
+    SET FOREIGN_KEY_CHECKS = 0;     -- re-enable checking of foreign keys
+"; 
+$handle = fopen("$directory/$output_file", 'a');
+fwrite($handle, $data);
+fclose($handle);
+
+// Do import if anonymizations worked
+if ($total_anonymizations > 1000000) { 
     logThis(1, "$total_anonymizations total anonymizations, this assumes anonymizations worked, proceeding with import");
     logThis(1, "Importing $directory/$output_file to $db_user@$db_server:$db_port $db_name, this may take a while");
     $command = "$mysql_cmd -h $db_server -P $db_port -u $db_user -p$db_pass $db_name < $directory/$output_file";
