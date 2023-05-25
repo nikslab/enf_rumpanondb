@@ -63,6 +63,11 @@ foreach ($tables as $table) {
     logThis(4, "Executing: $command");
     $errors = shell_exec($command);
     logThis(3, "Result: $errors");
+
+    // For testing
+    $command = "$directory/extract_table.sh $database_dump $table >> $directory/$output_file"."-full";
+    shell_exec($command);
+    
     $anonymizations = checkAnonymization("$directory/$output_file");
     logThis(3, "$anonymizations anonymizations on table $table");
     $total_anonymizations += $anonymizations;
