@@ -37,9 +37,10 @@ logThis(4, "$pipe");
 // Construct the gunzip with a pipe to myanon
 $backup_file = getNewestFile($backup_directory);
 logThis(3, "Backup file is $backup_file");
-$command = "$gunzip -f $backup_file 2> /dev/null";
+$command = "$gunzip -f $backup_file";
 logThis(3, "Executing: $command");
-shell_exec($command);
+$errors = shell_exec($command);
+logThis(3, "Result: $errors");
 
 $database_dump = getNewestFile($backup_directory);
 
@@ -57,7 +58,8 @@ foreach ($tables as $table) {
     logThis(2, "Extracting and anonymizing table $table");
     $command = "$directory/extract_table.sh $database_dump $table | $myanon_cmd -f $directory/myanon.cfg >> $directory/$output_file 2> /dev/null";    
     logThis(4, "Executing: $command");
-    shell_exec($command);
+    $errors = shell_exec($command);
+    logThis(3, "Result: $errors");
     $anonymizations = checkAnonymization("$directory/$output_file");
     logThis(3, "$anonymizations anonymizations on table $table");
     $total_anonymizations += $anonymizations;
