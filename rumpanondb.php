@@ -44,9 +44,9 @@ shell_exec($command);
 $database_dump = getNewestFile($backup_directory);
 
 // Start with fresh output file
-unlink($directory/$output_file); 
+unlink("$directory/$output_file"); 
 $data = "SET sql_mode = '';\n"; // disable strict mode
-$handle = fopen($directory/$output_file, 'a');
+$handle = fopen("$directory/$output_file", 'a');
 fwrite($handle, $data);
 fclose($handle);
 
