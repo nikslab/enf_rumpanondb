@@ -56,7 +56,7 @@ $total_anonymizations = 0;
 // Extract individual tables, anonymize them, and append them to result sql
 foreach ($tables as $table) {
     logThis(2, "Extracting and anonymizing table $table");
-    $command = "$directory/extract_table.sh $database_dump $table | $myanon_cmd -f $directory/myanon.cfg >> $directory/$output_file 2> /dev/null";    
+    $command = "$directory/extract_table.sh $database_dump $table | $myanon_cmd -f $directory/myanon.cfg >> $directory/$output_file";    
     logThis(4, "Executing: $command");
     $errors = shell_exec($command);
     logThis(3, "Result: $errors");
