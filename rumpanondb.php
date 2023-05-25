@@ -37,7 +37,7 @@ logThis(4, "$pipe");
 // Construct the gunzip with a pipe to myanon
 $backup_file = getNewestFile($backup_directory);
 logThis(3, "Backup file is $backup_file");
-$command = "$gunzip $backup_file 2> /dev/null";
+$command = "$gunzip -f $backup_file 2> /dev/null";
 logThis(3, "Executing: $command");
 shell_exec($command);
 
