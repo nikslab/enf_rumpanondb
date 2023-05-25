@@ -13,6 +13,8 @@ if ($tables === false) {
     logThis(-1, "Error reading table names from file $tables_file");
 }
 
+/* NO LONGER USING MYANON
+
 // Concat myanon-top.cfg and myanon-apollo.cfg => myanon.cfg
 $file1_contents = file_get_contents("$directory/myanon-top.cfg");
 $file2_contents = file_get_contents("$directory/myanon-apollo.cfg");
@@ -34,7 +36,7 @@ logThis(4, "$pipe");
 
 */
 
-// Construct the gunzip with a pipe to myanon
+// Construct the gunzip command
 $backup_file = getNewestFile($backup_directory);
 logThis(3, "Backup file is $backup_file");
 $command = "$gunzip -f $backup_file";
@@ -54,26 +56,16 @@ $handle = fopen("$directory/$output_file", 'a');
 fwrite($handle, $data);
 fclose($handle);
 
-$total_anonymizations = 0;
-
-// Extract individual tables, anonymize them, and append them to result sql
+// Extract individual tables and append them to result sql
 foreach ($tables as $table) {
-    logThis(2, "Extracting and anonymizing table $table");
-    $command = "$directory/extract_table.sh $database_dump $table | $myanon_cmd -f $directory/myanon.cfg >> $directory/$output_file";    
+    logThis(2, "Extracting table $table");
+    $command = "$directory/extract_table.sh $database_dump $table >> $directory/$output_file";    
     logThis(4, "Executing: $command");
     $errors = shell_exec($command);
     logThis(3, "Result: $errors");
-
-    // For testing
-    $command = "$directory/extract_table.sh $database_dump $table >> $directory/$output_file"."-full";
-    shell_exec($command);
-    
-    $anonymizations = checkAnonymization("$directory/$output_file");
-    logThis(3, "$anonymizations anonymizations on table $table");
-    $total_anonymizations += $anonymizations;
 }
 
-// Add a line to reenable foreign key checks
+// Append a line to reenable foreign key checks
 $data = "
     SET FOREIGN_KEY_CHECKS = 0;     -- re-enable checking of foreign keys
 "; 
@@ -81,18 +73,24 @@ $handle = fopen("$directory/$output_file", 'a');
 fwrite($handle, $data);
 fclose($handle);
 
-// Do import if anonymizations worked
-if ($total_anonymizations > 1000000) { 
-    logThis(1, "$total_anonymizations total anonymizations, this assumes anonymizations worked, proceeding with import");
-    logThis(1, "Importing $directory/$output_file to $db_user@$db_server:$db_port $db_name, this may take a while");
-    $command = "$mysql_cmd -h $db_server -P $db_port -u $db_user -p$db_pass $db_name < $directory/$output_file";
-    logThis(4, "Executing: $command");
-    $error = shell_exec($command);
-    logThis(3, "Result: $errors");
-    logThis(1, "Finished importing $directory/$output_file");
-} else {
-    logThis(1, "$total_anonymizations total anonymizations, this assumes anonymizations FAILED, no import will hapen");
-}
+// Import
+logThis(1, "Importing $directory/$output_file to $db_user@$db_server:$db_port $db_name, this may take a while");
+$command = "$mysql_cmd -h $db_server -P $db_port -u $db_user -p$db_pass $db_name < $directory/$output_file";
+logThis(4, "Executing: $command");
+$error = shell_exec($command);
+logThis(3, "Result: $errors");
+logThis(1, "Finished importing $directory/$output_file");
+
+// Anonymize
+logThis(1, "Anonymizing database $db_name");
+$command = "$mysql_cmd -h $db_server -P $db_port -u $db_user -p$db_pass $db_name < $directory/anonymize-apollo.sql";
+logThis(4, "Executing: $command");
+$error = shell_exec($command);
+logThis(3, "Result: $errors");
+logThis(1, "Finished anonymizing");
+
+// NEED TESTS FOR ANONYMIZATION!
+
 
 $end_time = microtime(true);
 $execution_time = round($end_time - $start_time, 2);
@@ -123,6 +121,31 @@ function getNewestFile($directory) {
 
     return null; // Return null if no files found
 }
+
+function logThis($level, $msg) {
+    global $LOG_FILE, $LOG_LEVEL, $LOG_PRINT;
+
+    $script = basename($_SERVER['PHP_SELF'], '.php');
+
+    if ($level <= $LOG_LEVEL) {
+        $now = date('Y-m-d H:i:s');
+        $entry = "$now $script [$level] $msg\n";
+        if ($level < 1) {
+            $entry .= "$now $script [$level] ...exiting\n";
+        }    
+        $fp = fopen($LOG_FILE, 'a');
+        fwrite($fp, $entry);
+        fclose($fp);
+        if ( ($LOG_PRINT) || ($level < 1) ) {
+            print "$entry";
+        }
+    }
+    if ($level < 1) {
+        exit(0);
+    }
+}
+
+/* NOT IN USE
 
 function checkAnonymization($filename) {
     $f = fopen($filename, 'r');
@@ -160,27 +183,6 @@ function checkAnonymization($filename) {
     return $number;
 }
 
-function logThis($level, $msg) {
-    global $LOG_FILE, $LOG_LEVEL, $LOG_PRINT;
-
-    $script = basename($_SERVER['PHP_SELF'], '.php');
-
-    if ($level <= $LOG_LEVEL) {
-        $now = date('Y-m-d H:i:s');
-        $entry = "$now $script [$level] $msg\n";
-        if ($level < 1) {
-            $entry .= "$now $script [$level] ...exiting\n";
-        }    
-        $fp = fopen($LOG_FILE, 'a');
-        fwrite($fp, $entry);
-        fclose($fp);
-        if ( ($LOG_PRINT) || ($level < 1) ) {
-            print "$entry";
-        }
-    }
-    if ($level < 1) {
-        exit(0);
-    }
-}
+*/
 
 ?>
